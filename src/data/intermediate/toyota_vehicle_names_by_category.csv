@@ -1,0 +1,33 @@
+Category,vehicle_name,Electrified
+Cars,Camry,Yes
+Cars,Corolla,No
+Cars,Corolla Hatchback,No
+Cars,Corolla Hybrid,Yes
+Cars,GR Corolla,No
+Cars,GR Supra,No
+Cars,GR86,No
+Cars,Mirai,Yes
+Cars,Prius,Yes
+Cars,Prius Prime,Yes
+Cars,Prius Plug-in Hybrid,Yes
+Cars,Toyota Crown,Yes
+Crossovers,Corolla Cross,No
+Crossovers,Corolla Cross Hybrid,Yes
+Crossovers,Grand Highlander,No
+Crossovers,Grand Highlander Hybrid,Yes
+Crossovers,Highlander,No
+Crossovers,Highlander Hybrid,Yes
+Crossovers,RAV4,No
+Crossovers,RAV4 Hybrid,Yes
+Crossovers,RAV4 Plug-in Hybrid,Yes
+Crossovers,Toyota Crown Signia,Yes
+SUVs,4Runner,No
+SUVs,4Runner i-FORCE MAX,Yes
+SUVs,bZ4X,Yes
+SUVs,Land Cruiser,Yes
+SUVs,Sequoia,Yes
+Trucks,Tacoma,No
+Trucks,Tacoma i-FORCE MAX,Yes
+Trucks,Tundra,No
+Trucks,Tundra i-FORCE MAX,Yes
+Minivan,Sienna,Yes
