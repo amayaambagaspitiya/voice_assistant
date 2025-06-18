@@ -27,7 +27,6 @@ class ToyotaFAQScraper:
     def scrape_faqs(self):
         self.driver.get("https://support.toyota.com/s/?language=en_US")
 
-        # Click "Vehicles" topic
         try:
             vehicles_link = self.wait.until(
                 EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, '/vehicles') and contains(@class, 'topicLink')]"))
@@ -38,7 +37,6 @@ class ToyotaFAQScraper:
             self.driver.quit()
             return
 
-        # Load more FAQs
         for _ in range(self.load_more_clicks):
             try:
                 load_more_btn = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "loadmore")))
@@ -48,25 +46,22 @@ class ToyotaFAQScraper:
                 print("No more 'Load More' button.")
                 break
 
-        # Collect article URLs
         faq_links = self.driver.find_elements(By.CSS_SELECTOR, "li.article-item.selfServiceArticleListItem a")
         article_urls = list({link.get_attribute("href") for link in faq_links if link.get_attribute("href")})
         print(f"Found {len(article_urls)} article links.")
 
-        # Extract each article
         for url in article_urls:
             try:
                 self.driver.get(url)
                 WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "article")))
                 time.sleep(1)
 
-                # Extract question
+                
                 try:
                     question = self.driver.find_element(By.CSS_SELECTOR, "article.summary h2.article-head").text.strip()
                 except:
                     question = "No question found"
 
-                # Extract answer
                 try:
                     answer = self.driver.find_element(
                         By.CSS_SELECTOR,
@@ -97,20 +92,16 @@ class ToyotaFAQScraper:
         df = df[df["question"].str.strip() != ""]
         df = df[df["answer"].str.strip() != ""]
 
-        # Remove placeholders
         placeholders = ["No question found", "No content available"]
         df = df[~df["question"].isin(placeholders)]
         df = df[~df["answer"].isin(placeholders)]
 
-        # Remove duplicates
         df = df.drop_duplicates(subset=["question"])
 
-        # Normalize formatting
         df["question"] = df["question"].str.strip().str.capitalize()
         df["answer"] = df["answer"].str.replace("\r", "", regex=False).str.strip()
         df["answer"] = df["answer"].apply(lambda x: re.sub(r"\s{2,}", " ", x))
 
-        # Remove short answers
         df = df[df["answer"].str.len() > 30]
 
         self.cleaned_df = df
@@ -126,7 +117,4 @@ class ToyotaFAQScraper:
         self.save_to_csv()
 
 
-# Run from main
-if __name__ == "__main__":
-    scraper = ToyotaFAQScraper(load_more_clicks=80, output_csv="toyota_vehicle_faqs.csv", headless=False)
-    scraper.run()
+   

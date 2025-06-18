@@ -8,27 +8,25 @@ from src.voice_assistant.customer_promts import CustomerSimulator
 from src.voice_assistant.retrieve_toyota import ToyotaRetriever
 
 def main():
-    # vehicle_scraper = VehicleNames()
-    # vehicle_scraper.run()
+    vehicle_scraper = VehicleNames()
+    vehicle_scraper.run()
 
-    # spec_scraper = ToyotaSpecScraper()
-    # spec_scraper.extract_specs()
+    spec_scraper = ToyotaSpecScraper()
+    spec_scraper.extract_specs()
 
-    # category_scraper = ToyotaVehicleScraper()
-    # category_scraper.run()
+    category_scraper = ToyotaVehicleScraper()
+    category_scraper.run()
 
-    # seating_scraper = ToyotaSeatingScraper()
-    # seating_scraper.run()
+    seating_scraper = ToyotaSeatingScraper()
+    seating_scraper.run()
 
-    # spec_parser = VehicleSpecsParser()
-    # spec_parser.parse()
+    spec_parser = VehicleSpecsParser()
+    spec_parser.parse()
 
-    # faq_scraper = ToyotaFAQScraper()
-    # faq_scraper.run()
+    scraper = ToyotaFAQScraper(load_more_clicks=80, output_csv="toyota_vehicle_faqs.csv", headless=False)
+    scraper.run()
 
-    retriever = ToyotaRetriever()
-    simulator = CustomerSimulator(retriever)
-    simulator.simulate("Hi, what brings you in today?")
+
 
 
 

@@ -42,7 +42,6 @@ class ToyotaSpecScraper:
                 driver.get(url)
                 time.sleep(5)
 
-                # Expand all collapsible sections
                 toggles = driver.find_elements(By.CSS_SELECTOR, "div.feature-accordions button.tcom-accordion-header")
                 print(f"Found {len(toggles)} collapsible sections")
 
@@ -56,7 +55,6 @@ class ToyotaSpecScraper:
 
                 time.sleep(1.5)
 
-                # Extract full container text
                 container = driver.find_element(By.CSS_SELECTOR, "div.app-content-container")
                 full_text = container.text.strip()
 

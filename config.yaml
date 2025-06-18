@@ -1,0 +1,7 @@
+paths:
+  specs_csv: "src/data/final/final_cleaned_toyota_specnew2.csv"
+  faqs_csv: "src/data/final/toyota_vehicle_faqs.csv"
+
+embedding:
+  chunk_size: 500
+  chunk_overlap: 50

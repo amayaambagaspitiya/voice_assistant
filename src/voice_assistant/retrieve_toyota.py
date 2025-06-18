@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import yaml
 from dotenv import load_dotenv
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
@@ -7,15 +8,25 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 
 class ToyotaRetriever:
-    def __init__(self):
+    def __init__(self, config_path="config.yaml"):
         load_dotenv()
+        self.config = self._load_config(config_path)
         self.embedding = OpenAIEmbeddings()
         self.vectorstore = None
         self._load_and_index()
 
+    def _load_config(self, path):
+        with open(path, "r") as file:
+            return yaml.safe_load(file)
+
     def _load_and_index(self):
-        specs = pd.read_csv("src/data/final/final_cleaned_toyota_specnew2.csv")
-        faqs = pd.read_csv("src/data/final/toyota_vehicle_faqs.csv")
+        spec_path = self.config["paths"]["specs_csv"]
+        faq_path = self.config["paths"]["faqs_csv"]
+        chunk_size = self.config["embedding"]["chunk_size"]
+        chunk_overlap = self.config["embedding"]["chunk_overlap"]
+
+        specs = pd.read_csv(spec_path)
+        faqs = pd.read_csv(faq_path)
 
         spec_docs = [
             f"{row['vehicle_name_clean']} {row['model']} - {row['engine_specs']}, MSRP: {row['Mpg/Other/Price - Base MSRP']}, Seating: {row['seating']}"
@@ -29,7 +40,7 @@ class ToyotaRetriever:
 
         docs = [Document(page_content=txt) for txt in spec_docs + faq_docs]
 
-        splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         split_docs = splitter.split_documents(docs)
 
         self.vectorstore = Chroma.from_documents(split_docs, self.embedding)

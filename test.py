@@ -7,18 +7,14 @@ from src.voice_assistant.mic_input import  WhisperMic
 from src.voice_assistant.text_to_speech import speak
 
 
-# 1. Load retriever and simulator
 retriever = ToyotaRetriever()
 simulator = CustomerSimulator(retriever)
 
-# 2. Simulate a known question
 sales_rep_input = "hi hope you are doing well" \
 
 
-# 3. Run simulation
 customer_response = simulator.simulate(sales_rep_input)
 
-# 4. Print results
 print("\n--- TEST RESULT ---")
 print("Sales Rep:", sales_rep_input)
 print("Assistant Response:", customer_response)

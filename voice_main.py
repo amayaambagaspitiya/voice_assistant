@@ -19,7 +19,7 @@ def main():
     while True:
             input("\nPress Enter to record your question (or Ctrl+C to exit)...")
             
-            audio_path = whisper_mic.record(duration=6)
+            audio_path = whisper_mic.record(duration=15)
             
             sales_rep_input = whisper_mic.transcribe(audio_path)
 
