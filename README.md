@@ -2,7 +2,7 @@
  This project builds a voice-based assistant for Toyota sales representatives to simulate conversations with different customer personas and answer questions using real vehicle specs and FAQs. Below is the end-to-end workflow:
 
 1. Data Collection
-Toyota Specs: Scraped vehicle specification pages (dynamic JS-rendered content) using Selenium.
+Toyota Specs: Scraped vehicle specification pages  using Selenium.
  FAQs: Scraped and cleaned frequently asked questions using BeautifulSoup and custom logic.
 
 2. Data Preprocessing
