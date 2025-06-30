@@ -9,24 +9,20 @@ from src.voice_assistant.retrieve_toyota import ToyotaRetriever
 from src.voice_assistant.mic_input import WhisperMic
 from src.voice_assistant.text_to_speech import speak
 
-
 def main():
     retriever = ToyotaRetriever()
     simulator = CustomerSimulator(retriever)
     whisper_mic = WhisperMic("base")
 
-
     while True:
-            input("\nPress Enter to record your question (or Ctrl+C to exit)...")
-            
-            audio_path = whisper_mic.record(duration=15)
-            
-            sales_rep_input = whisper_mic.transcribe(audio_path)
+        input("\nPress Enter to record your question (or Ctrl+C to exit)...")
+        audio_path = whisper_mic.record(duration=15)
+        sales_rep_input = whisper_mic.transcribe(audio_path)
 
-            response = simulator.simulate(sales_rep_input)
+        response = simulator.simulate(sales_rep_input)
+        voice_id = simulator.get_voice_for_persona()
 
-            speak(response)
+        speak(response, voice_id)
 
 if __name__ == "__main__":
     main()
-

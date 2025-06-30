@@ -5,16 +5,31 @@ from src.voice_assistant.customer_promts import CustomerSimulator
 from src.voice_assistant.retrieve_toyota import ToyotaRetriever
 from src.voice_assistant.mic_input import  WhisperMic
 from src.voice_assistant.text_to_speech import speak
+import pyttsx3
 
 
-retriever = ToyotaRetriever()
-simulator = CustomerSimulator(retriever)
+# engine = pyttsx3.init()
+# voices = engine.getProperty("voices")
+# for v in voices:
+#     print(f"Name: {v.name}, ID: {v.id}")
 
-sales_rep_input = "hi hope you are doing well" \
+def main():
+    retriever = ToyotaRetriever()
+    simulator = CustomerSimulator(retriever)
 
+    while True:
+        try:
+            sales_rep_input = input("\nType your sales rep message (or type 'exit' to quit): ")
+            if sales_rep_input.strip().lower() == "exit":
+                break
 
-customer_response = simulator.simulate(sales_rep_input)
+            response = simulator.simulate(sales_rep_input)
+            persona_name = simulator.current_persona  
+            speak(response, persona_name)            
 
-print("\n--- TEST RESULT ---")
-print("Sales Rep:", sales_rep_input)
-print("Assistant Response:", customer_response)
+        except KeyboardInterrupt:
+            print("\nExiting.")
+            break
+
+if __name__ == "__main__":
+    main()

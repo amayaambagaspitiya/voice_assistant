@@ -4,8 +4,7 @@ from src.data_scrapping.extract_text_from_filters import ToyotaVehicleScraper
 from src.data_scrapping.extract_seat_numbers import ToyotaSeatingScraper
 from src.data_scrapping.create_csv_from_text import VehicleSpecsParser
 from src.data_scrapping.faq_scraping import ToyotaFAQScraper
-from src.voice_assistant.customer_promts import CustomerSimulator
-from src.voice_assistant.retrieve_toyota import ToyotaRetriever
+
 
 def main():
     vehicle_scraper = VehicleNames()

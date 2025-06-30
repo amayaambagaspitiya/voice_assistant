@@ -8,75 +8,68 @@ class CustomerSimulator:
         load_dotenv()
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.retriever = retriever
+        self.message_history = []
 
         self.personas = {
-            "Mrs. Brooks": """
-You are Mrs. Brooks, a first-time car buyer.
-You want a Toyota that’s easy to drive, safe, and doesn’t require much technical knowledge.
-Ask beginner-friendly questions like: “Is a hybrid hard to maintain?”, “What’s the difference between LE and XLE?”, or “Is this car easy to park?”
-Sales Rep said: "{sales_rep_input}"
-""",
-            "Mr. Thompson": """
-You are Mr. Thompson, a father of two.
-You’re looking for a safe, fuel-efficient Toyota for daily commutes and family trips.
-Ask about trunk space, seating, safety features, and hybrid options.
-Sales Rep said: "{sales_rep_input}"
-""",
-            "Ms. Taylor": """
-You are Ms. Taylor, a tech-savvy city driver.
-You’re interested in modern Toyota features like Apple CarPlay, hybrid engines, and reverse cameras.
-Sales Rep said: "{sales_rep_input}"
-""",
-            "Mr. Harris": """
-You are Mr. Harris, a retired buyer on a budget.
-You want something reliable, affordable, and easy to maintain.
-Ask about battery warranty, service cost, and price.
-Sales Rep said: "{sales_rep_input}"
-""",
-            "Mr. Mitchell": """
-You are Mr. Mitchell, an outdoorsy weekend explorer.
-You want a rugged Toyota with AWD, good cargo space, and off-road performance.
-Sales Rep said: "{sales_rep_input}"
-"""
+            "Mrs. Brooks": "You are Mrs. Brooks, a first-time car buyer. You want a Toyota that’s easy to drive, safe, and not too technical.",
+            "Mr. Thompson": "You are Mr. Thompson, a father of two. You want a safe, fuel-efficient Toyota for commuting and family trips.",
+            "Ms. Taylor": "You are Ms. Taylor, a tech-savvy city driver. You like features like Apple CarPlay, hybrid engines, and smart tech.",
+            "Mr. Harris": "You are Mr. Harris, a retired buyer on a budget. You value reliability, low maintenance, and affordability.",
+            "Mr. Mitchell": "You are Mr. Mitchell, an adventurous weekend explorer. You want a rugged Toyota with AWD and good cargo space."
         }
 
     def pick_random_persona(self):
-        self.current_persona, self.current_template = random.choice(list(self.personas.items()))
+        self.current_persona, self.persona_description = random.choice(list(self.personas.items()))
+        self.message_history = []
         return self.current_persona
 
     def build_prompt(self, sales_rep_input):
-        base = self.current_template.replace("{sales_rep_input}", sales_rep_input)
         context = self.retriever.retrieve_context(sales_rep_input)
+        mood = random.choice(["curious", "hesitant", "excited", "skeptical", "confident"])
 
-        return f"""
-You are a customer roleplaying as {self.current_persona} in a conversation with a Toyota sales representative.
+        instructions = f"""
+You are a customer named {self.current_persona}. {self.persona_description}
+You are NOT the sales rep. You are ONLY the customer. Stay fully in character.
 
-Your objective is to continue the conversation **naturally**, based on what the sales rep just said. You should respond like a curious customer who is genuinely trying to make a decision.
+You are currently in a conversation with a Toyota sales representative.
+
+Your objective is to continue the conversation **naturally**, based on what the sales rep just said.
 
 You must:
--  Stay in character based on your persona and goals
--  Respond **directly** to what the sales rep just said
-- Ask **only one** realistic follow-up question or make one thoughtful comment
--  Keep your reply short: **1–2 sentences max**
--  Sound natural and human (not robotic or overly formal)
+- Stay in character
+- Reply to the sales rep's latest comment
+- Ask **one** realistic follow-up question or make a thoughtful remark
+- Keep your response to 1–2 short, natural-sounding sentences
+- Speak in a tone that is {mood}
 
-You can express emotions like interest, hesitation, excitement, or concern depending on your persona.
+Use the info below to inform your response if helpful.
 
-
-Context:
+Context (retrieved knowledge):
 {context}
-
-{base}
 """
 
+        messages = [{"role": "system", "content": instructions}]
+        for pair in self.message_history:
+            messages.append({"role": "user", "content": pair["user"]})
+            messages.append({"role": "assistant", "content": pair["assistant"]})
+
+        messages.append({"role": "user", "content": sales_rep_input})
+        return messages
+
     def get_customer_response(self, sales_rep_input):
-        prompt = self.build_prompt(sales_rep_input)
+        messages = self.build_prompt(sales_rep_input)
         response = self.client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=120  
+            messages=messages,
+            max_tokens=120,
+            temperature=0.5
         )
-        return response.choices[0].message.content
+        output = response.choices[0].message.content
+        self.message_history.append({
+            "user": sales_rep_input,
+            "assistant": output
+        })
+        return output
 
     def simulate(self, sales_rep_input):
         if not hasattr(self, "current_persona"):
