@@ -16,13 +16,11 @@ def main():
 
     while True:
         input("\nPress Enter to record your question (or Ctrl+C to exit)...")
-        audio_path = whisper_mic.record(duration=15)
+        audio_path = whisper_mic.record()
         sales_rep_input = whisper_mic.transcribe(audio_path)
-
         response = simulator.simulate(sales_rep_input)
-        voice_id = simulator.get_voice_for_persona()
-
-        speak(response, voice_id)
-
+        persona_name = simulator.current_persona  
+        speak(response, persona_name) 
+       
 if __name__ == "__main__":
     main()
