@@ -28,5 +28,4 @@ class WhisperMic:
 
     def transcribe(self, file_path):
         result = self.model.transcribe(file_path)
-        print(result)
         return result["text"]
